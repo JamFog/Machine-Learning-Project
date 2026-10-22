@@ -63,3 +63,7 @@ python -m ipykernel install --user --name ct4101-pg19
 - Baseline: majority-class (Zero-R). Candidate models: Multinomial Naive Bayes, Logistic Regression.
 - Metrics: accuracy and macro-averaged F1.
 
+## Assistance declaration
+
+See [`ASSISTANCE.md`](ASSISTANCE.md).
+
