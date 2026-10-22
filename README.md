@@ -32,7 +32,7 @@ download instructions. Data is not committed to this repository.
 
 ## Setup
 
-Requires **Python 3.12** (tested on Windows 11).
+Requires **Python 3.15** (tested on Windows 11).
 
 ```powershell
 # from the repository root
@@ -63,6 +63,3 @@ python -m ipykernel install --user --name ct4101-pg19
 - Baseline: majority-class (Zero-R). Candidate models: Multinomial Naive Bayes, Logistic Regression.
 - Metrics: accuracy and macro-averaged F1.
 
-## Assistance declaration
-
-See [`ASSISTANCE.md`](ASSISTANCE.md).
