@@ -17,8 +17,8 @@ The dataset is hosted in the public Google Cloud Storage bucket `gs://deepmind-g
 - `metadata.csv` — one row per book: `id`, `short_book_title`, `publication_date`, `url`
 - `train/`, `validation/`, `test/` — one `<id>.txt` file per book
 
-This project only uses `metadata.csv` and a stratified subsample of a few hundred books from
-`train/`.
+This project only uses `metadata.csv` and a stratified subsample of 500 books (100 per period).
+PG-19's own train/validation/test folders are not used as splits; the project makes its own split in notebook 02.
 
 ## Download
 
@@ -34,8 +34,11 @@ Individual books can be fetched by id:
 https://storage.googleapis.com/deepmind-gutenberg/train/<id>.txt
 ```
 
-The sampled book ids, and the code that downloads them, will live in `notebooks/01_data_audit.ipynb`
-/ `src/`.
+Most books are in `train/`; a few are in `validation/` or `test/` instead, so the download code tries
+all three folders.
+
+The sampled book ids are saved to `interim/sample.csv`, and the code that downloads them is in
+`notebooks/01_data_audit.ipynb`. Book texts are saved to `raw/books/<id>.txt`.
 
 ## Folder layout
 

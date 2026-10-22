@@ -32,7 +32,7 @@ download instructions. Data is not committed to this repository.
 
 ## Setup
 
-Requires **Python 3.12** (tested on Windows 11).
+Requires **Python 3.15** (tested on Windows 11).
 
 ```powershell
 # from the repository root
@@ -53,16 +53,18 @@ python -m ipykernel install --user --name ct4101-pg19
 | Notebook | Purpose | Milestone |
 |---|---|---|
 | `01_data_audit.ipynb` | Load metadata, data audit, define period buckets, sample books | 2 |
-| `02_baseline.ipynb` | Preprocessing pipeline, train/test split, Zero-R baseline | 2 |
+| `02_baseline.ipynb` | Text audit and preparation, train/test split, Zero-R baseline | 2 |
 | `03_model_comparison.ipynb` | Naive Bayes / Logistic Regression vs baseline, tuning, error analysis | 3 |
 
 ## Evaluation design (summary)
 
-- Stratified 80/20 train/test split **by book**; the test set is held out until final evaluation.
-- Stratified k-fold cross-validation on the training set for model selection and tuning.
+- 80/20 train/test split **grouped by author** (no author in both sets) and stratified by period;
+  the test set is held out until final evaluation.
+- Stratified k-fold cross-validation on the training set, also grouped by author, for model selection and tuning.
 - Baseline: majority-class (Zero-R). Candidate models: Multinomial Naive Bayes, Logistic Regression.
 - Metrics: accuracy and macro-averaged F1.
 
 ## Assistance declaration
 
 See [`ASSISTANCE.md`](ASSISTANCE.md).
+
