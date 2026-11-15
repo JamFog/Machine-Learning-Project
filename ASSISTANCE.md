@@ -8,6 +8,7 @@ up to date throughout the project.
 | 2026-09-29 | Generative AI | Research and formatting for the Milestone 1 proposal                                                                                                                                                                                                                                                                                                                                                                                                | Reviewed and edited by me                                              |
 | 2026-10-15 | Claude Code (coding assistant) | Initial repository scaffold: folder structure, README, `.gitignore`, `requirements.txt`, `src/config.py`                                                                                                                                                                                                                                                                                                                                            | Reviewed by me                                                         |
 | 2026-10-22 | Claude Code (coding assistant) | Guidance and code for notebooks 01–02 | Ran every cell myself and verified the outputs;  flagged data problems |
+| 2026-11-04 to 2026-11-15 | Claude Code (coding assistant) | Milestone 3: code for notebook 03 (model tuning, error analysis, comparison, final test)  |
 
 
 ## External code and sources
