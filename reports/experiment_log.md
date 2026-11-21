@@ -60,5 +60,13 @@ MLP pipeline: TF-IDF → `StandardScaler(with_mean=False)` → `MLPClassifier` (
 | E19 | MLP learning curves | 64 units, `alpha=1e-4`, seed 0 | Training loss ≈ 0.001 within a few epochs; early stopping ends at 12–14 epochs, so the best hold-out score was around epoch 2–4 | Memorises the training books quickly |
 | E20 | Fold-by-fold comparison | MLP `alpha=10` (mean of 3 seeds) vs boosting and LR, same folds | Beats boosting on 3/5 folds (+0.023 on average; two of the wins are ties), beats LR on 4/5 (+0.069) | Comparable to boosting, not consistently better. Boosting stays the preferred model; the MLP is not run on the test set |
 
+### Engineered features and robustness (notebook 05, same data and folds, cross-validation only)
+
+| ID | Experiment | Settings | Result | Decision |
+|---|---|---|---|---|
+| E21 | Style features alone | avg sentence length, type-token ratio, semicolons per 1,000 words; LR (scaled) and boosting | LR 0.311 ± 0.041, boosting 0.370 ± 0.041 | Clear signal from 3 numbers (Zero-R 0.084); sentence length and semicolons fall steadily over time, type-token ratio shows no trend |
+| E22 | TF-IDF + style features | LR C=100 and boosting 400 rounds, no other changes | LR 0.463 ± 0.070 (vs 0.460; better on 3/5 folds), boosting 0.482 ± 0.063 (vs 0.506; worse on 4/5) | Not added to the final model; used for interpretation only |
+| E23 | Robustness to excerpt position | Trained on middle excerpts; validation books scored on excerpts 25% / 50% / 75% through the book | Boosting 0.481 / 0.506 / 0.514; LR 0.445 / 0.460 / 0.462 | Robust: changes ≤ 0.025, well inside the fold spread. 23% of books' 25%/75% excerpts overlap the middle one (13% of words on average) |
+
 The full results table, including fold scores and timings, is saved by notebook 03 to `reports/experiment_results.csv`;
-the MLP results are saved by notebook 04 to `reports/mlp_results.csv`.
+the MLP results are saved by notebook 04 to `reports/mlp_results.csv`, and notebook 05's to `reports/features_robustness_results.csv`.
