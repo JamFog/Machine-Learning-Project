@@ -3,6 +3,8 @@
 ## Seed and evaluation policy
 
 - Every random step uses `config.RANDOM_STATE = 42` (sampling, splits, trees, forest, boosting), so re-running gives the same numbers.
+- Exception: each neural-network (MLP) setting is run with 3 seeds (0, 1, 2) for its starting weights, to measure how much
+  the result depends on the seed. The folds still use seed 42.
 - Model selection uses 5-fold cross-validation on the training set, grouped by author and stratified by period.
   All models use the same folds.
 - Main metric: macro-F1. Secondary: accuracy, confusion matrix, share of mistakes in a neighbouring period.
@@ -45,4 +47,18 @@ All scores are macro-F1 from 5-fold grouped CV on the training set (mean ± std)
 | E14 | Fold-by-fold comparison | chosen settings, same folds | Boosting beats LR on 4/5 folds (+0.046 per fold on average), forest on 3/5 (+0.039) | Boosting chosen as preferred model |
 | E15 | **Final test (run once)** | Boosting, 400 rounds, trained on all 288 training books | **Test macro-F1 0.519, accuracy 0.507**; 80% of mistakes in a neighbouring period | Matches the CV estimate (0.506 ± 0.064) |
 
-The full results table, including fold scores and timings, is saved by notebook 03 to `reports/experiment_results.csv`.
+### Neural network (notebook 04, same data and folds, cross-validation only)
+
+MLP pipeline: TF-IDF → `StandardScaler(with_mean=False)` → `MLPClassifier` (ReLU, Adam, lr 0.001, batch 32, early stopping on a
+10% hold-out, patience 10, max 200 epochs). Each setting is the mean of 3 seeds; "seed ±" is the spread between seeds.
+
+| ID | Experiment | Settings | Result | Decision |
+|---|---|---|---|---|
+| E16 | First MLP | 1 hidden layer, 64 units, `alpha=1e-4` | 0.467 ± 0.065 (seed ± 0.026); training score 0.933 | Level with LR; heavy overfitting |
+| E17 | MLP capacity | 16, 64, 256 units (`alpha=1e-4`) | 0.442, 0.467, 0.472 | No clear effect; 256 units is 3.5× slower |
+| E18 | MLP regularisation | 64 units; `alpha` = 1e-4, 0.01, 1, 10, 100 | 0.467, 0.449, 0.465, **0.528 ± 0.051** (seed ± 0.011), 0.491 | `alpha=10` by the one-standard-error rule (threshold 0.505) |
+| E19 | MLP learning curves | 64 units, `alpha=1e-4`, seed 0 | Training loss ≈ 0.001 within a few epochs; early stopping ends at 12–14 epochs, so the best hold-out score was around epoch 2–4 | Memorises the training books quickly |
+| E20 | Fold-by-fold comparison | MLP `alpha=10` (mean of 3 seeds) vs boosting and LR, same folds | Beats boosting on 3/5 folds (+0.023 on average; two of the wins are ties), beats LR on 4/5 (+0.069) | Comparable to boosting, not consistently better. Boosting stays the preferred model; the MLP is not run on the test set |
+
+The full results table, including fold scores and timings, is saved by notebook 03 to `reports/experiment_results.csv`;
+the MLP results are saved by notebook 04 to `reports/mlp_results.csv`.
