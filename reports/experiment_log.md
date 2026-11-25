@@ -68,5 +68,17 @@ MLP pipeline: TF-IDF → `StandardScaler(with_mean=False)` → `MLPClassifier` (
 | E22 | TF-IDF + style features | LR C=100 and boosting 400 rounds, no other changes | LR 0.463 ± 0.070 (vs 0.460; better on 3/5 folds), boosting 0.482 ± 0.063 (vs 0.506; worse on 4/5) | Not added to the final model; used for interpretation only |
 | E23 | Robustness to excerpt position | Trained on middle excerpts; validation books scored on excerpts 25% / 50% / 75% through the book | Boosting 0.481 / 0.506 / 0.514; LR 0.445 / 0.460 / 0.462 | Robust: changes ≤ 0.025, well inside the fold spread. 23% of books' 25%/75% excerpts overlap the middle one (13% of words on average) |
 
+### Error analysis and interpretation (notebook 06, preferred model: boosting 400 rounds)
+
+| ID | Experiment | Settings | Result | Decision |
+|---|---|---|---|---|
+| E24 | Out-of-fold error slices | Same 5 folds; 95% CIs from 1,000 author-level bootstrap resamples | Overall accuracy 0.50 (CI 0.44–0.55); 1850–1899 recall 0.39 (0.28–0.52), 1900–1918 0.61 (0.50–0.72); within 10 years of a boundary 0.40 (0.32–0.47) vs 0.59 (0.50–0.66); 82% of errors in a neighbouring period | 1850–1899 and books near boundaries are the main weaknesses |
+| E25 | 1850–1899 / 1900–1918 confusion | Out-of-fold predictions | 65 of 147 books confused; median 10 vs 11 years from 1900 (confused vs correct) | Not mainly a boundary effect; topic/genre seems to play a part |
+| E26 | Test set with uncertainty (reporting only) | Final model from notebook 03, rebuilt | Macro-F1 0.52 (CI 0.37–0.63), accuracy 0.51 (0.39–0.62) | Same as E15; nothing chosen from it |
+| E27 | Calibration | Out-of-fold `predict_proba` | Average confidence 0.78 vs accuracy 0.50, ECE 0.28; >0.95 confident books only 64% correct | Strongly overconfident; probabilities not to be shown as confidence |
+| E28 | Global explanation | Permutation importance on held-out folds, top 150 words per fold, 5 repeats | Largest mean drop ≈ 0.01 macro-F1; most top words matter in only 1–2 folds | Reliance spread over many words; old spellings/formal words vs plainer modern words |
+| E29 | Local explanation | Leave-one-word-out, first 1850–1899 test book predicted 1900–1918 (*Demos*, Gissing, 1886) | Predicted 1900–1918 at 96%; contractions (*wasn*, *doesn*) and *newspaper*, *working* push towards 1900s | Example of confident failure on realist late-Victorian prose |
+
 The full results table, including fold scores and timings, is saved by notebook 03 to `reports/experiment_results.csv`;
-the MLP results are saved by notebook 04 to `reports/mlp_results.csv`, and notebook 05's to `reports/features_robustness_results.csv`.
+the MLP results are saved by notebook 04 to `reports/mlp_results.csv`, notebook 05's to `reports/features_robustness_results.csv`,
+and notebook 06's to `reports/error_slices.csv`, `reports/calibration_boosting.csv` and `reports/permutation_importance_boosting.csv`.
