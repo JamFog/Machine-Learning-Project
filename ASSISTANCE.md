@@ -10,6 +10,7 @@ up to date throughout the project.
 | 2026-10-22 | Claude Code (coding assistant) | Guidance and code for notebooks 01–02 | Ran every cell myself and verified the outputs;  flagged data problems |
 | 2026-11-04 to 2026-11-15 | Claude Code (coding assistant) | Milestone 3: code for notebook 03 (model tuning, error analysis, comparison, final test), the title-page check in notebook 02, and drafts of the leakage register and experiment log | Ran every cell myself and checked the outputs against the written conclusions; corrected wording that did not match the results |
 | 2026-11-21 | Claude Code (coding assistant) | Milestone 4 planning; wording corrections in notebooks 01–02 (First Folio grouping, Don Quixote date, translation limitations) | Checked each correction against the data and notebook outputs |
+| 2026-11-21 to 2026-11-25 | Claude Code (coding assistant) | Milestone 4: code for notebooks 04 (MLP), 05 (style features, robustness) and 06 (error slices, bootstrap intervals, calibration, permutation importance, local explanation) and `src/text.py`; drafts of the findings text, experiment log entries E16–E29, data statement, model card, reflective changelog and README updates | Ran every notebook myself and checked the outputs against the written findings; corrected claims that did not match (e.g. the MLP timing comparison, the vocabulary size) |
 
 
 ## External code and sources

@@ -27,9 +27,11 @@ download instructions. Data is not committed to this repository.
 ├── notebooks/              Numbered notebooks, run in order
 ├── src/                    Reusable Python code imported by the notebooks
 └── reports/
+    ├── model_card.md           Model card: intended use, performance, slices, risks, recommendation
+    ├── changelog.md            Reflective changelog: important decisions and their evidence
     ├── leakage_register.md     Leakage risks and how each is handled
     ├── experiment_log.md       Seed policy and every experiment run, in order
-    ├── experiment_results.csv  All cross-validation results (written by notebook 03)
+    ├── *.csv                   Results tables written by notebooks 03–06
     └── figures/                Figures used in the report
 ```
 
@@ -52,7 +54,7 @@ python -m ipykernel install --user --name ct4101-pg19
 3. Run the notebooks in `notebooks/` in numerical order (Kernel → Restart Kernel and Run All Cells).
    Each notebook saves the files the next one needs, so they must be run in order.
 
-Notebook 03 takes a few minutes, mostly for the random forest and gradient boosting.
+Notebooks 03–06 each take a few minutes (notebook 04 is the slowest: every MLP setting is run with 3 seeds).
 
 ## Notebooks
 
@@ -61,6 +63,9 @@ Notebook 03 takes a few minutes, mostly for the random forest and gradient boost
 | `01_data_audit.ipynb` | Load metadata, data audit, define period buckets, remove duplicate works, sample 100 books per period, download texts | 2 |
 | `02_baseline.ipynb` | Text audit and cleaning, 5,000-word excerpts, wrong-date and translation checks, train/test split, Zero-R baseline | 2 (updated in 3) |
 | `03_models.ipynb` | Logistic regression, kNN, decision tree, random forest and gradient boosting: tuning, error analysis, comparison, final test, responsible use and plan for weeks 8–12 | 3 |
+| `04_mlp.ipynb` | Small neural network (MLP): capacity, regularisation, 3 seeds, learning curves, fold-by-fold comparison with boosting, time and size (CV only) | 4 |
+| `05_features_robustness.ipynb` | Three engineered style features (alone and added to TF-IDF), and robustness to which part of the book is used (CV only) | 4 |
+| `06_errors_interpretation.ipynb` | Out-of-fold error analysis with author-level bootstrap intervals, test result with intervals, calibration, permutation importance and a local explanation | 4 |
 
 ## Evaluation design (summary)
 
@@ -75,7 +80,7 @@ Notebook 03 takes a few minutes, mostly for the random forest and gradient boost
   from the cross-validation results only.
 - **Test set:** used once, at the end, for the preferred model only.
 
-## Results so far (Milestone 3)
+## Results
 
 | Model | Macro-F1 (5-fold CV, mean ± std) |
 |---|---|
@@ -86,9 +91,28 @@ Notebook 03 takes a few minutes, mostly for the random forest and gradient boost
 | Random forest (100 trees) | 0.498 ± 0.073 |
 | **Gradient boosting (400 rounds)** | **0.506 ± 0.064** |
 
-**Preferred model:** gradient boosting. On the 71 held-out test books it scores **macro-F1 0.519** and accuracy 0.507,
-close to its cross-validation estimate. 80% of its mistakes are in a neighbouring period.
-See notebook 03 for the full analysis, limitations and the plan for weeks 8–12.
+| Small neural network (MLP, 64 units, `alpha=10`; not adopted) | 0.528 ± 0.051 |
+
+**Preferred model:** gradient boosting. On the 71 held-out test books (used once) it scores **macro-F1 0.52
+(95% CI 0.37–0.63)** and accuracy 0.51, close to its cross-validation estimate. 80% of its mistakes are in a
+neighbouring period. The MLP was comparable on cross-validation but not consistently better across folds, so boosting was kept.
+
+**Main findings (Milestone 4):**
+- **Hardest cases:** 1850–1899 (recall 0.39) and books within 10 years of a period boundary (0.40 vs 0.59 further away).
+  Many 1850–1899 and 1900–1918 books are confused in both directions, not only near 1900, so topic and genre play a part.
+- **Overconfident:** average confidence 0.78 against 50% accuracy (ECE 0.28), so the probabilities are not reliable.
+- **Interpretation:** no single word matters much; old spellings and formal words point to older periods, plainer words to later ones.
+- **Robust** to using a different part of each book (scores change by at most 0.025). Three style features carry signal
+  on their own but did not improve the model.
+
+**Recommendation:** do not deploy as an automatic dating tool; see [`reports/model_card.md`](reports/model_card.md).
+
+## Documentation
+
+- [`data/README.md`](data/README.md): data source, download and **data statement**
+- [`reports/model_card.md`](reports/model_card.md): **model card**
+- [`reports/changelog.md`](reports/changelog.md): **reflective changelog**
+- [`reports/experiment_log.md`](reports/experiment_log.md) and [`reports/leakage_register.md`](reports/leakage_register.md)
 
 ## Assistance declaration
 
